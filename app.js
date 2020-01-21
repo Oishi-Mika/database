@@ -7,13 +7,14 @@ app.set('view engine', 'pug')
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(bodyParser.json())
 
-var db = new sqlite3.Database('twitter.db')
+var db = new sqlite3.Database('instagram.db')
 
 app.get('/', function (req, res, next) {
     var query = "\
-        SELECT t.account, u.name, t.datetime, t.content\
-        FROM tweet t, follow f, user u\
-        WHERE t.account = u.account and f.follower_account = 'mob1' and f.followee_account = t.account;\
+        SELECT p.post_id,p.account, p.content, p.datetime, i.photo_id\
+        FROM  post p, follow f, include i\
+        WHERE p.account = f.followee_id and  f.follower_id = 'aseihurricane' and  i.post_id = p.post_id\
+        ORDER BY p.datetime asc\ ;\
         ";
         console.log("DBG:" + query);
     db.all(query, {}, function (err, rows) {
@@ -27,4 +28,5 @@ app.get('/', function (req, res, next) {
 });
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
+
 
